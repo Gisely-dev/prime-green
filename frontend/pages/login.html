@@ -1,0 +1,79 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Entrar | Prime Clube</title>
+
+    <link rel="stylesheet" href="../styles/style.css">
+</head>
+<body>
+
+    <header class="header">
+        <div class="container">
+            <a href="../index.html" class="logo">PRIME <span>CLUBE</span></a>
+
+            <nav class="nav">
+                <a href="../index.html">Início</a>
+                <a href="cadastro.html">Criar conta</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="auth-container">
+        <section class="auth-card">
+
+            <h1>Bem-vindo de volta</h1>
+
+            <p>
+                Entre na sua conta para acompanhar seus treinos e sua evolução.
+            </p>
+
+            <form id="login-form">
+
+                <div class="form-group">
+                    <label for="email">E-mail</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="Digite seu e-mail"
+                        autocomplete="email"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Senha</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Digite sua senha"
+                        autocomplete="current-password"
+                        required
+                    >
+                </div>
+
+                <p id="form-message" role="status" aria-live="polite"></p>
+
+                <button type="submit" class="btn btn-primary">
+                    Entrar na minha conta
+                </button>
+
+            </form>
+
+            <p class="auth-footer">
+                Ainda não possui uma conta?
+                <a href="cadastro.html">Cadastre-se</a>
+            </p>
+
+        </section>
+    </main>
+
+    <script type="module" src="../scripts/auth.js"></script>
+
+</body>
+</html>
