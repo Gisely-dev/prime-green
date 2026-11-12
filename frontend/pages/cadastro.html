@@ -1,0 +1,105 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Criar conta | Prime Clube</title>
+
+    <link rel="stylesheet" href="../styles/style.css">
+</head>
+<body>
+
+    <header class="header">
+        <div class="container">
+            <a href="../index.html" class="logo">PRIME <span>CLUBE</span></a>
+
+            <nav class="nav">
+                <a href="../index.html">Início</a>
+                <a href="login.html">Entrar</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="auth-container">
+        <section class="auth-card">
+
+            <h1>Crie sua conta</h1>
+
+            <p>
+                Comece sua jornada e acompanhe sua evolução no Prime Clube.
+            </p>
+
+            <form id="register-form">
+
+                <div class="form-group">
+                    <label for="name">Nome completo</label>
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        placeholder="Digite seu nome"
+                        autocomplete="name"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="email">E-mail</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="Digite seu e-mail"
+                        autocomplete="email"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Senha</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Crie uma senha"
+                        autocomplete="new-password"
+                        minlength="8"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="confirm-password">Confirmar senha</label>
+                    <input
+                        type="password"
+                        id="confirm-password"
+                        name="confirm-password"
+                        placeholder="Digite a senha novamente"
+                        autocomplete="new-password"
+                        minlength="8"
+                        required
+                    >
+                </div>
+
+                <p id="form-message" role="status" aria-live="polite"></p>
+
+                <button type="submit" class="btn btn-primary">
+                    Criar minha conta
+                </button>
+
+            </form>
+
+            <p class="auth-footer">
+                Já possui uma conta?
+                <a href="login.html">Faça login</a>
+            </p>
+
+        </section>
+    </main>
+
+    <script type="module" src="../scripts/auth.js"></script>
+
+</body>
+</html>
