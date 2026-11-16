@@ -1,0 +1,136 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Meu perfil | Prime Clube</title>
+
+    <link rel="stylesheet" href="../styles/style.css">
+</head>
+<body>
+
+    <header class="header">
+        <div class="container">
+
+            <a href="../index.html" class="logo">
+                PRIME <span>CLUBE</span>
+            </a>
+
+            <nav class="nav">
+                <a href="dashboard.html">Painel</a>
+                <a href="perfil.html">Meu perfil</a>
+                <button type="button" id="logout-button" class="btn btn-primary">
+                    Sair
+                </button>
+            </nav>
+
+        </div>
+    </header>
+
+    <main class="profile-container">
+
+        <section class="profile-header">
+            <h1>Meu perfil</h1>
+
+            <p>
+                Mantenha suas informações atualizadas para acompanhar sua evolução.
+            </p>
+        </section>
+
+        <section class="profile-card">
+
+            <h2>Informações pessoais</h2>
+
+            <form id="profile-form">
+
+                <div class="form-group">
+                    <label for="name">Nome completo</label>
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        placeholder="Seu nome completo"
+                        autocomplete="name"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="email">E-mail</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="Seu e-mail"
+                        autocomplete="email"
+                        disabled
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="birth-date">Data de nascimento</label>
+                    <input
+                        type="date"
+                        id="birth-date"
+                        name="birthDate"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="height">Altura (cm)</label>
+                    <input
+                        type="number"
+                        id="height"
+                        name="height"
+                        placeholder="Ex.: 170"
+                        min="1"
+                        max="250"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="weight">Peso atual (kg)</label>
+                    <input
+                        type="number"
+                        id="weight"
+                        name="weight"
+                        placeholder="Ex.: 65.5"
+                        min="1"
+                        max="500"
+                        step="0.1"
+                    >
+                </div>
+
+                <p id="profile-message" role="status" aria-live="polite"></p>
+
+                <button type="submit" class="btn btn-primary">
+                    Salvar alterações
+                </button>
+
+            </form>
+
+        </section>
+
+        <section class="profile-card">
+
+            <h2>Minha jornada</h2>
+
+            <p>
+                Aqui você poderá acompanhar seu histórico de medidas,
+                registros de treinamento e evolução corporal.
+            </p>
+
+            <a href="dashboard.html" class="btn btn-secondary">
+                Voltar ao painel
+            </a>
+
+        </section>
+
+    </main>
+
+    <script type="module" src="../scripts/profile.js"></script>
+
+</body>
+</html>
