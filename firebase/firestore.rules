@@ -1,0 +1,57 @@
+
+rules_version = '2';
+
+service cloud.firestore {
+    match /databases/{database}/documents {
+
+        function isAuthenticated() {
+            return request.auth != null;
+        }
+
+        function isOwner(uid) {
+            return isAuthenticated() && request.auth.uid == uid;
+        }
+
+        match /users/{uid} {
+
+            // O usuário só pode consultar o próprio perfil
+            allow read: if isOwner(uid);
+
+            // Cadastro inicial do usuário
+            allow create: if isOwner(uid)
+                && request.resource.data.role == "aluno";
+
+            // Atualização dos dados pessoais
+            allow update: if isOwner(uid)
+                && request.resource.data.role == resource.data.role;
+
+            // Exclusão de perfil não é permitida diretamente
+            allow delete: if false;
+
+            // Registros de medidas
+            match /measurements/{measurementId} {
+                allow read, write: if isOwner(uid);
+            }
+
+            // Treinos do usuário
+            match /workouts/{workoutId} {
+                allow read, write: if isOwner(uid);
+            }
+
+            // Registros de treinamento
+            match /workoutLogs/{logId} {
+                allow read, write: if isOwner(uid);
+            }
+
+            // Fotos de evolução
+            match /progressPhotos/{photoId} {
+                allow read, write: if isOwner(uid);
+            }
+
+            // Análises de evolução
+            match /progressAnalyses/{analysisId} {
+                allow read, write: if isOwner(uid);
+            }
+        }
+    }
+}
