@@ -4,14 +4,15 @@ import { getAuth } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth
 import { getFirestore } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
 import { getStorage } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-storage.js";
 
-// Configurações do projeto Firebase
+// Configuração do Firebase JS SDK v7.20.0
 const firebaseConfig = {
-    apiKey: "SUA_API_KEY",
-    authDomain: "SEU_AUTH_DOMAIN",
-    projectId: "SEU_PROJECT_ID",
-    storageBucket: "SEU_STORAGE_BUCKET",
-    messagingSenderId: "SEU_MESSAGING_SENDER_ID",
-    appId: "SEU_APP_ID"
+  apiKey: "AIzaSyCbG-vyVdKGQ6zKyQOAXIIX-fkM83Pzefg",
+  authDomain: "prime-green.firebaseapp.com",
+  projectId: "prime-green",
+  storageBucket: "prime-green.firebasestorage.app",
+  messagingSenderId: "819761690891",
+  appId: "1:819761690891:web:0ca9dbd897ff88571f0a0e",
+  measurementId: "G-617S828XJS"
 };
 
 // Inicialização do Firebase
