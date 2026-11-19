@@ -1,35 +1,34 @@
 
+import { auth } from "./firebase.js";
 import {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
     updateProfile
 } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
 
-import { auth, db } from "./firebase.js";
+const registerForm = document.getElementById("register-form");
+const loginForm = document.getElementById("login-form");
 
-import {
-    doc,
-    setDoc,
-    serverTimestamp
-} from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+const formMessage = document.getElementById("form-message");
 
-// Cadastro de novos usuários
-const registerForm = document.querySelector("#register-form");
+function showMessage(message, type = "error") {
+    if (!formMessage) return;
+
+    formMessage.textContent = message;
+    formMessage.dataset.type = type;
+}
 
 if (registerForm) {
     registerForm.addEventListener("submit", async (event) => {
         event.preventDefault();
 
-        const name = document.querySelector("#name").value.trim();
-        const email = document.querySelector("#email").value.trim();
-        const password = document.querySelector("#password").value;
-        const confirmPassword = document.querySelector("#confirm-password").value;
-        const message = document.querySelector("#form-message");
-
-        message.textContent = "";
+        const name = document.getElementById("name").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
+        const confirmPassword = document.getElementById("confirm-password").value;
 
         if (password !== confirmPassword) {
-            message.textContent = "As senhas não são iguais.";
+            showMessage("As senhas não coincidem.");
             return;
         }
 
@@ -40,60 +39,32 @@ if (registerForm) {
                 password
             );
 
-            const user = userCredential.user;
-
-            await updateProfile(user, {
+            await updateProfile(userCredential.user, {
                 displayName: name
             });
 
-            await setDoc(doc(db, "users", user.uid), {
-                name: name,
-                email: email,
-                role: "aluno",
-                createdAt: serverTimestamp()
-            });
+            showMessage("Conta criada com sucesso!", "success");
 
-            window.location.href = "login.html";
-
+            registerForm.reset();
         } catch (error) {
-            message.textContent = getAuthErrorMessage(error.code);
+            showMessage("Não foi possível criar a conta. Verifique os dados.");
         }
     });
 }
-
-// Login de usuários cadastrados
-const loginForm = document.querySelector("#login-form");
 
 if (loginForm) {
     loginForm.addEventListener("submit", async (event) => {
         event.preventDefault();
 
-        const email = document.querySelector("#email").value.trim();
-        const password = document.querySelector("#password").value;
-        const message = document.querySelector("#form-message");
-
-        message.textContent = "";
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
 
         try {
             await signInWithEmailAndPassword(auth, email, password);
 
             window.location.href = "dashboard.html";
-
         } catch (error) {
-            message.textContent = getAuthErrorMessage(error.code);
+            showMessage("E-mail ou senha inválidos.");
         }
     });
-}
-
-// Mensagens de erro
-function getAuthErrorMessage(errorCode) {
-    const errors = {
-        "auth/email-already-in-use": "Este e-mail já está cadastrado.",
-        "auth/invalid-email": "Digite um e-mail válido.",
-        "auth/weak-password": "A senha deve ter pelo menos 6 caracteres.",
-        "auth/invalid-credential": "E-mail ou senha incorretos.",
-        "auth/too-many-requests": "Muitas tentativas. Tente novamente mais tarde."
-    };
-
-    return errors[errorCode] || "Não foi possível concluir a operação. Tente novamente.";
 }
