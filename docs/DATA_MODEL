@@ -1,0 +1,111 @@
+# Prime Green — Modelo de Dados
+
+## 1. Objetivo
+
+Este documento define a estrutura de armazenamento de dados
+utilizada pelo Prime Clube no Firebase Firestore.
+
+Os dados serão organizados de forma a permitir o gerenciamento
+de contas, perfis, medidas corporais, treinos e evolução física.
+
+## 2. Coleções
+
+### users
+
+Armazena os dados básicos dos usuários cadastrados.
+
+Documento:
+users/{uid}
+
+Campos:
+- name: nome do usuário
+- email: e-mail
+- role: tipo de usuário
+- birthDate: data de nascimento
+- height: altura
+- weight: peso
+- createdAt: data de criação
+- updatedAt: data de atualização
+
+### measurements
+
+Armazena os registros de medidas corporais.
+
+Caminho:
+users/{uid}/measurements/{measurementId}
+
+Campos:
+- weight: peso
+- height: altura
+- waist: medida da cintura
+- hip: medida do quadril
+- chest: medida do peito
+- arm: medida do braço
+- thigh: medida da coxa
+- recordedAt: data do registro
+
+### workouts
+
+Armazena os treinos cadastrados para o usuário.
+
+Caminho:
+users/{uid}/workouts/{workoutId}
+
+Campos:
+- title: nome do treino
+- description: descrição
+- exercises: lista de exercícios
+- createdAt: data de criação
+
+### workoutLogs
+
+Armazena os registros de execução dos treinos.
+
+Caminho:
+users/{uid}/workoutLogs/{logId}
+
+Campos:
+- workoutId: identificador do treino
+- completedAt: data de conclusão
+- duration: duração
+- notes: observações
+
+### progressPhotos
+
+Armazena referências às fotos de evolução física.
+
+Caminho:
+users/{uid}/progressPhotos/{photoId}
+
+Campos:
+- storagePath: caminho da imagem
+- recordedAt: data do registro
+- notes: observações
+
+### progressAnalyses
+
+Armazena resultados de análises de evolução física.
+
+Caminho:
+users/{uid}/progressAnalyses/{analysisId}
+
+Campos:
+- summary: resumo da análise
+- metrics: métricas analisadas
+- createdAt: data da análise
+
+## 3. Segurança
+
+Cada usuário deverá acessar somente os dados associados
+ao seu próprio UID.
+
+As regras de segurança do Firestore serão responsáveis
+por controlar as operações de leitura e escrita.
+
+## 4. Tecnologias
+
+- Firebase Authentication
+- Cloud Firestore
+- Firebase Storage (integração futura)
+- Java Spring Boot (backend futuro)
+- Python FastAPI (serviço de análise futuro)
