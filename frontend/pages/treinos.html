@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Treinos | Prime Clube</title>
+
+    <link rel="stylesheet" href="../styles/style.css">
+</head>
+<body>
+
+    <header class="header">
+        <div class="container">
+            <h1>Prime Clube</h1>
+            <p>Organização de treinos</p>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <section class="card">
+            <h2>Cadastrar treino</h2>
+
+            <form id="workout-form">
+
+                <div class="form-group">
+                    <label for="title">Nome do treino</label>
+                    <input
+                        type="text"
+                        id="title"
+                        placeholder="Ex: Treino de pernas"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Descrição</label>
+                    <textarea
+                        id="description"
+                        placeholder="Descreva o objetivo do treino"
+                    ></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="exercises">Exercícios</label>
+                    <textarea
+                        id="exercises"
+                        placeholder="Digite um exercício por linha"
+                    ></textarea>
+                </div>
+
+                <button type="submit" class="btn-primary">
+                    Salvar treino
+                </button>
+
+                <p id="workout-message"></p>
+
+            </form>
+        </section>
+
+        <section class="card">
+            <h2>Meus treinos</h2>
+
+            <div id="workout-list">
+                <p>Carregando treinos...</p>
+            </div>
+        </section>
+
+        <a href="dashboard.html">Voltar ao dashboard</a>
+
+    </main>
+
+    <script type="module">
+        import {
+            saveWorkout,
+            getWorkouts,
+            deleteWorkout
+        } from "../scripts/workouts.js";
+
+        import { auth } from "../scripts/firebase.js";
+
+        import {
+            onAuthStateChanged
+        } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
+
+        const form = document.getElementById("workout-form");
+        const message = document.getElementById("workout-message");
+        const workoutList = document.getElementById("workout-list");
+
+        let currentUser = null;
+
+        // Verifica a autenticação
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = "login.html";
+                return;
+            }
+
+            currentUser = user;
+            await loadWorkouts();
+        });
+
+        // Cadastra um treino
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            if (!currentUser) {
+                message.textContent = "Faça login para cadastrar um treino.";
+                return;
+            }
+
+            message.textContent = "Salvando treino...";
+
+            const exercises = document
+                .getElementById("exercises")
+                .value
+                .split("\n")
+                .map(exercise => exercise.trim())
+                .filter(exercise => exercise.length > 0);
+
+            const workout = {
+                title: document.getElementById("title").value,
+                description: document.getElementById("description").value,
+                exercises: exercises
+            };
+
+            try {
+                await saveWorkout(workout);
+
+                message.textContent = "Treino salvo com sucesso!";
+                form.reset();
+
+                await loadWorkouts();
+
+            } catch (error) {
+                console.error(error);
+                message.textContent = "Não foi possível salvar o treino.";
+            }
+        });
+
+        // Carrega os treinos cadastrados
+        async function loadWorkouts() {
+            try {
+                const workouts = await getWorkouts();
+
+                workoutList.replaceChildren();
+
+                if (workouts.length === 0) {
+                    workoutList.textContent = "Nenhum treino cadastrado.";
+                    return;
+                }
+
+                workouts.forEach((workout) => {
+                    const card = document.createElement("article");
+                    const title = document.createElement("h3");
+                    const description = document.createElement("p");
+                    const exerciseList = document.createElement("ul");
+                    const deleteButton = document.createElement("button");
+
+                    title.textContent = workout.title;
+                    description.textContent =
+                        workout.description || "Sem descrição.";
+
+                    workout.exercises.forEach((exercise) => {
+                        const item = document.createElement("li");
+                        item.textContent = exercise;
+                        exerciseList.appendChild(item);
+                    });
+
+                    deleteButton.type = "button";
+                    deleteButton.textContent = "Excluir treino";
+                    deleteButton.className = "btn-primary";
+
+                    deleteButton.addEventListener("click", async () => {
+                        const confirmed = window.confirm(
+                            "Deseja realmente excluir este treino?"
+                        );
+
+                        if (!confirmed) {
+                            return;
+                        }
+
+                        try {
+                            await deleteWorkout(workout.id);
+                            await loadWorkouts();
+
+                        } catch (error) {
+                            console.error(error);
+                            alert("Não foi possível excluir o treino.");
+                        }
+                    });
+
+                    card.append(
+                        title,
+                        description,
+                        exerciseList,
+                        deleteButton
+                    );
+
+                    card.classList.add("card");
+                    workoutList.appendChild(card);
+                });
+
+            } catch (error) {
+                console.error(error);
+                workoutList.textContent =
+                    "Não foi possível carregar os treinos.";
+            }
+        }
+    </script>
+
+</body>
+</html>
