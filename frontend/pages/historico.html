@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Histórico de treinos | Prime Clube</title>
+
+    <link rel="stylesheet" href="../styles/style.css">
+</head>
+<body>
+
+    <header class="header">
+        <div class="container">
+            <h1>Prime Clube</h1>
+            <p>Histórico de atividades</p>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <section class="card">
+            <h2>Treinos realizados</h2>
+
+            <div id="history-list">
+                <p>Carregando histórico...</p>
+            </div>
+
+            <p id="history-message"></p>
+        </section>
+
+        <a href="dashboard.html">Voltar ao dashboard</a>
+
+    </main>
+
+    <script type="module">
+        import { auth } from "../scripts/firebase.js";
+
+        import {
+            getWorkoutLogs
+        } from "../scripts/workoutLogs.js";
+
+        import {
+            onAuthStateChanged
+        } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
+
+        const historyList = document.getElementById("history-list");
+        const message = document.getElementById("history-message");
+
+        // Verifica se o usuário está autenticado
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = "login.html";
+                return;
+            }
+
+            await loadHistory();
+        });
+
+        // Busca e exibe os treinos realizados
+        async function loadHistory() {
+            try {
+                const logs = await getWorkoutLogs();
+
+                historyList.replaceChildren();
+
+                if (logs.length === 0) {
+                    historyList.textContent =
+                        "Você ainda não possui treinos registrados.";
+                    return;
+                }
+
+                logs.forEach((log) => {
+                    const card = document.createElement("article");
+                    const title = document.createElement("h3");
+                    const details = document.createElement("p");
+                    const notes = document.createElement("p");
+
+                    const date = log.completedAt?.toDate();
+
+                    title.textContent =
+                        log.workoutTitle || "Treino realizado";
+
+                    details.textContent = [
+                        date
+                            ? date.toLocaleString("pt-BR")
+                            : "Data indisponível",
+                        `Duração: ${log.duration} minutos`
+                    ].join(" | ");
+
+                    notes.textContent =
+                        log.notes || "Nenhuma observação registrada.";
+
+                    card.append(title, details, notes);
+                    card.classList.add("card");
+
+                    historyList.appendChild(card);
+                });
+
+            } catch (error) {
+                console.error(error);
+
+                message.textContent =
+                    "Não foi possível carregar o histórico de treinos.";
+            }
+        }
+    </script>
+
+</body>
+</html>
