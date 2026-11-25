@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Medidas corporais | Prime Clube</title>
+
+    <link rel="stylesheet" href="../styles/style.css">
+</head>
+<body>
+
+    <header class="header">
+        <div class="container">
+            <h1>Prime Clube</h1>
+            <p>Evolução corporal</p>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <section class="card">
+            <h2>Registrar medidas</h2>
+
+            <form id="measurement-form">
+
+                <div class="form-group">
+                    <label for="weight">Peso (kg)</label>
+                    <input
+                        type="number"
+                        id="weight"
+                        step="0.1"
+                        min="0"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="height">Altura (cm)</label>
+                    <input
+                        type="number"
+                        id="height"
+                        step="0.1"
+                        min="0"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="waist">Cintura (cm)</label>
+                    <input
+                        type="number"
+                        id="waist"
+                        step="0.1"
+                        min="0"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="hip">Quadril (cm)</label>
+                    <input
+                        type="number"
+                        id="hip"
+                        step="0.1"
+                        min="0"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="chest">Peito (cm)</label>
+                    <input
+                        type="number"
+                        id="chest"
+                        step="0.1"
+                        min="0"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="arm">Braço (cm)</label>
+                    <input
+                        type="number"
+                        id="arm"
+                        step="0.1"
+                        min="0"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="thigh">Coxa (cm)</label>
+                    <input
+                        type="number"
+                        id="thigh"
+                        step="0.1"
+                        min="0"
+                    >
+                </div>
+
+                <button type="submit" class="btn-primary">
+                    Salvar medidas
+                </button>
+
+                <p id="measurement-message"></p>
+
+            </form>
+        </section>
+
+        <section class="card">
+            <h2>Histórico de medidas</h2>
+
+            <div id="measurement-history">
+                <p>Carregando registros...</p>
+            </div>
+        </section>
+
+        <a href="dashboard.html">Voltar ao dashboard</a>
+
+    </main>
+
+    <script type="module">
+        import {
+            saveMeasurement,
+            getMeasurements
+        } from "../scripts/measurements.js";
+
+        import { auth } from "../scripts/firebase.js";
+
+        import {
+            onAuthStateChanged
+        } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
+
+        const form = document.getElementById("measurement-form");
+        const message = document.getElementById("measurement-message");
+        const historyContainer = document.getElementById("measurement-history");
+
+        // Verifica se o usuário está autenticado
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = "login.html";
+                return;
+            }
+
+            await loadHistory();
+        });
+
+        // Salva um novo registro
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            message.textContent = "Salvando medidas...";
+
+            const measures = {
+                weight: document.getElementById("weight").value,
+                height: document.getElementById("height").value,
+                waist: document.getElementById("waist").value,
+                hip: document.getElementById("hip").value,
+                chest: document.getElementById("chest").value,
+                arm: document.getElementById("arm").value,
+                thigh: document.getElementById("thigh").value
+            };
+
+            try {
+                await saveMeasurement(measures);
+
+                message.textContent = "Medidas salvas com sucesso!";
+                form.reset();
+
+                await loadHistory();
+
+            } catch (error) {
+                console.error(error);
+                message.textContent = "Não foi possível salvar as medidas.";
+            }
+        });
+
+        // Carrega os registros anteriores
+        async function loadHistory() {
+            try {
+                const records = await getMeasurements();
+
+                if (records.length === 0) {
+                    historyContainer.textContent = "Nenhuma medida registrada.";
+                    return;
+                }
+
+                historyContainer.replaceChildren();
+
+                records.forEach((record) => {
+                    const item = document.createElement("article");
+                    const title = document.createElement("h3");
+                    const details = document.createElement("p");
+
+                    title.textContent = "Registro de medidas";
+
+                    const date = record.recordedAt?.toDate();
+
+                    details.textContent = [
+                        date ? date.toLocaleDateString("pt-BR") : "Data indisponível",
+                        `Peso: ${record.weight} kg`,
+                        `Altura: ${record.height} cm`,
+                        `Cintura: ${record.waist ?? "—"} cm`,
+                        `Quadril: ${record.hip ?? "—"} cm`,
+                        `Peito: ${record.chest ?? "—"} cm`,
+                        `Braço: ${record.arm ?? "—"} cm`,
+                        `Coxa: ${record.thigh ?? "—"} cm`
+                    ].join(" | ");
+
+                    item.append(title, details);
+                    historyContainer.appendChild(item);
+                });
+
+            } catch (error) {
+                console.error(error);
+                historyContainer.textContent =
+                    "Não foi possível carregar o histórico.";
+            }
+        }
+    </script>
+
+</body>
+</html>
